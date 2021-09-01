@@ -16,7 +16,24 @@
 				</div>
 			</div>
 		</div>
-
+		
+		<!-- 获得信物 -->
+		<div class="fan" :class="this.popupclassList" v-show="isShow.popupShow">
+			<img :src="imgUrl.popup" alt="" class="fan_img">
+			<div class="img">
+				<img :src="imgUrl.bean">
+			</div>
+			<div class="text">
+				<div class="up">恭喜您获得:</div>
+				<div class="down">信物-豆子</div>
+			</div>
+			<div class="icon">
+				<div class="btn" @mousedown="closedown()" @mouseup="closeup()">
+					<img :src="imgUrl.close1" alt="" ref="btn">
+				</div>
+			</div>
+		</div>
+		
 		<!-- aside -->
 		<div class="aside">
 			<div class="up">{{now_question.number}}/10</div>
@@ -55,10 +72,22 @@
 		},
 		data() {
 			return {
+				isShow:{
+					popupShow:false,
+				},
+				popupclassList:{
+					appear: true,
+					disAppear: false
+				},
 				componentKey:0,
 				imgUrl: {
-					background: require('../../assets/img/舞台.png')
+					background: require('../../assets/img/舞台.png'),
+					bean:require('../../assets/img/xw-dz.png'),
+					popup: require('../../assets/img/底2.jpg'),
+					close1: require('../../assets/icon/close.png'),
+					close2: require('../../assets/icon/close-press.png'),
 				},
+				// 问题
 				questions: [{
 						question: "下列不属于越剧十姐妹的是:",
 						options: [{
@@ -273,7 +302,7 @@
 					}
 				],
 				now_question: {
-					number: 1, //目前是哪道题目
+					number: 10, //目前是哪道题目
 					right: 0, //对了几道
 					integral: 0, //积分
 					select: 0, //用户的回答
@@ -307,11 +336,12 @@
 					}
 				}
 			}
-
+			
 			// 每隔5秒执行
 			let sh = window.setInterval(() => {
 				setTimeout(data.setanswer(data,sh), 0)
 			}, 1000*5);
+			
 		},
 		methods: {
 			// 强制刷新组件
@@ -349,7 +379,53 @@
 					data.classList.animation = false
 					// 关闭定时器
 					clearInterval(sh);
+					// 获得信物
+					let account = localStorage.getItem('account')
+					// 查找该用户是否有此物品
+					this.$http.post('/app/user/', {
+						"endata": {
+							"action": "myitems",
+							"account": account
+						}
+					}).then((res) => {
+						res = res.data
+						if (res.endata.items.includes(19)) {
+							return
+						} else {
+							data.$http.post('/app/user/', {
+								"endata": {
+									"action": "newitem",
+									"account": account,
+									"item_id": 19
+								}
+							}).then((res) => {
+								// 若无则弹窗出现
+								if(res.data.endata.su == 1){
+									data.classList.appear = true
+									data.classList.disAppear = false
+									data.isShow.popupShow = true
+									// 强制刷新背包
+									data.componentKey++
+								}
+							})
+						}
+					})
 				}
+			},
+			
+			//关闭弹窗
+			closedown: function() {
+				this.$refs.btn.src = this.imgUrl.close2
+			},
+			closeup: function() {
+				this.$refs.btn.src = this.imgUrl.close1
+				this.classList.appear = false
+				this.classList.disAppear = true
+				setTimeout(() => {
+					this.isShow.popupShow = false
+					this.classList.appear = true
+					this.classList.disAppear = false
+				}, 200)
 			},
 			
 			// 回到上级路由
@@ -451,7 +527,69 @@
 				}
 			}
 		}
-
+		
+		// 信物
+		.fan {
+			position: fixed;
+			width: 854px;
+			height: 482px;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 11;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		
+			.fan_img {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				z-index: -1;
+				pointer-events: none;
+			}
+		
+			.img {
+				img {
+					pointer-events: none;
+				}
+			}
+		
+			.text {
+				width: 50%;
+				height: 30%;
+				font-family: 'xingkai';
+				font-size: 40px;
+				color: rgba($color: #786850, $alpha: 1.0);
+				position: relative;
+		
+				.up {
+					position: absolute;
+					left: 20px;
+				}
+		
+				.down {
+					position: absolute;
+					bottom: 0;
+					right: 80px;
+				}
+			}
+		
+			.icon {
+				width: 15%;
+				height: 90%;
+		
+				.btn {
+					cursor: pointer;
+					display: flex;
+		
+					img {
+						pointer-events: none;
+					}
+				}
+			}
+		}
+		
 		.aside {
 			width: 400px;
 			height: 100%;
@@ -507,6 +645,7 @@
 		}
 	}
 	
+	// 过渡动画
 	.animation{
 		animation: getdown 5s linear infinite;
 	}
@@ -518,6 +657,35 @@
 	
 		100% {
 			transform: translateY(500px);
+		}
+	}
+	
+	
+	.appear {
+		animation: appear .2s ease;
+	}
+	
+	.disAppear {
+		animation: disappear .25s ease;
+	}
+	
+	@keyframes appear {
+		0% {
+			opacity: 0;
+		}
+	
+		100% {
+			opacity: 1;
+		}
+	}
+	
+	@keyframes disappear {
+		0% {
+			opacity: 1;
+		}
+	
+		100% {
+			opacity: 0;
 		}
 	}
 </style>

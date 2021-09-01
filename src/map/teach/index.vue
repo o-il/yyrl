@@ -4,7 +4,7 @@
 		<img :src="imgUrl.background" alt="" class="background">
 
 		<!-- 工具栏 -->
-		<Tools></Tools>
+		<Tools :key="toolKey"></Tools>
 
 		<!-- 讲台 -->
 		<div class="platform" ref="platform" @click="play()">
@@ -17,7 +17,7 @@
 		</div>
 
 		<!-- 右垫子 -->
-		<div class="right">
+		<div class="right" @click="getcopper()">
 			<img :src="imgUrl.right" alt="">
 		</div>
 
@@ -25,11 +25,13 @@
 		<div class="fan" :class="this.classList" v-show="isShow.popupShow">
 			<img :src="imgUrl.popup" alt="" class="fan_img">
 			<div class="img">
-				<img :src="imgUrl.fan">
+				<img :src="imgUrl.fan" v-show="isShow.fanShow">
+				<img :src="imgUrl.copper" v-show="!isShow.fanShow">
 			</div>
 			<div class="text">
 				<div class="up">恭喜您获得:</div>
-				<div class="down">信物-扇子</div>
+				<div class="down" v-show="isShow.fanShow">信物-扇子</div>
+				<div class="down" v-show="!isShow.fanShow">信物-铜钱</div>
 			</div>
 			<div class="icon">
 				<div class="btn" @mousedown="closedown()" @mouseup="closeup()">
@@ -53,9 +55,11 @@
 		},
 		data() {
 			return {
+				toolKey:0,
 				isShow: {
 					popupShow: false,
 					videoShow: false,
+					fanShow: false
 				},
 				classList: {
 					appear: true,
@@ -70,6 +74,7 @@
 					fan: require('../../assets/img/xw-sz.png'),
 					close1: require('../../assets/icon/close.png'),
 					close2: require('../../assets/icon/close-press.png'),
+					copper: require('../../assets/img/xw-tq.png'),
 				}
 			}
 		},
@@ -110,14 +115,50 @@
 						}).then((res) => {
 							// 若无则弹窗出现
 							if(res.data.endata.su == 1){
-								data.classList.appear = true;
-								data.classList.disAppear = false;
+								data.classList.appear = true
+								data.classList.disAppear = false
 								data.isShow.popupShow = true
+								data.isShow.fanShow = true
+								// 强制刷新背包
+								data.toolKey++
 							}
 						})
 					}
 				})
-				
+			},
+			getcopper(){
+				let account = localStorage.getItem('account')
+				let data = this
+				data.$refs.left.style = "cursor: auto;"
+				// 查找该用户是否有此物品
+				this.$http.post('/app/user/', {
+					"endata": {
+						"action": "myitems",
+						"account": account
+					}
+				}).then((res) => {
+					res = res.data
+					if (res.endata.items.includes(16)) {
+						return
+					} else {
+						data.$http.post('/app/user/', {
+							"endata": {
+								"action": "newitem",
+								"account": account,
+								"item_id": 16
+							}
+						}).then((res) => {
+							// 若无则弹窗出现
+							if(res.data.endata.su == 1){
+								data.classList.appear = true
+								data.classList.disAppear = false
+								data.isShow.popupShow = true
+								data.isShow.fanShow = false
+								data.toolKey++
+							}
+						})
+					}
+				})
 			},
 			play: function() {
 				this.isShow.videoShow = true

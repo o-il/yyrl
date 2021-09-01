@@ -15,17 +15,24 @@
 		<div class="bottle" @click="getpopup()" ref="bottle">
 			<img :src="imgUrl.bottle" alt="">
 		</div>
-
+		
+		<!-- 壁画 -->
+		<div class="painting"  @click="getpainting()"></div>
 
 		<!-- 获得信物 -->
 		<div class="getbottle" :class="this.classList" v-show="isShow.popupShow">
 			<img :src="imgUrl.popup" alt="" class="bottle_img">
 			<div class="img">
-				<img :src="imgUrl.bottle2">
+				<img :src="imgUrl.bottle2" v-show="isShow.bookShow">
+				<img :src="imgUrl.painting" v-show="isShow.paintingShow">
 			</div>
-			<div class="text">
+			<div class="text" v-show="isShow.bookShow">
 				<div class="up">恭喜您获得:</div>
 				<div class="down">信物-花瓶</div>
+			</div>
+			<div class="text" v-show="isShow.paintingShow">
+				<div class="up">恭喜您获得:</div>
+				<div class="down">信物-卷轴</div>
 			</div>
 			<div class="icon">
 				<div class="btn" @mousedown="closedown()" @mouseup="closeup()">
@@ -34,7 +41,6 @@
 			</div>
 		</div>
 
-        <!-- <Help v-show="isShow.helpShow" @display="display"></Help> -->
         <Help v-show="isShow.helpShow" @display="display"></Help>
       
   </div>
@@ -61,10 +67,13 @@
 					close2: require('../../assets/icon/close-press.png'),
 					//icon3: require('../../assets/icon/left.png'),
 					//icon4: require('../../assets/icon/left-press.png'),
+					painting: require('../../assets/img/xw-hz.png'),
 				},
 				isShow: {
 					popupShow: false,
                     helpShow: false,
+					paintingShow: false,
+					bookShow:false
 				},
 				classList: {
 					appear: true,
@@ -84,10 +93,48 @@
 				this.classList.disAppear = true
 				setTimeout(() => {
 					this.isShow.popupShow = false
+					this.classList.appear = true
+					this.classList.disAppear = false
 				}, 200)
+			},
+			// 获取挂画
+			getpainting(){
+				this.isShow.bookShow = false
+				let account = localStorage.getItem('account')
+				let data = this
+				// 查找该用户是否有此物品
+				this.$http.post('/app/user/', {
+					"endata": {
+						"action": "myitems",
+						"account": account
+					}
+				}).then((res) => {
+					res = res.data
+					if (res.endata.items.includes(15)) {
+						return
+					} else {
+						data.$http.post('/app/user/', {
+							"endata": {
+								"action": "newitem",
+								"account": account,
+								"item_id": 15
+							}
+						}).then((res) => {
+							// 若无则弹窗出现
+							if(res.data.endata.su == 1){
+								data.classList.appear = true;
+								data.classList.disAppear = false;
+								data.isShow.popupShow = true
+								data.isShow.paintingShow = true
+							}
+						})
+					}
+				})
+				
 			},
 			// 获取信物
 			getpopup: function() {
+				this.isShow.paintingShow = false
 				let account = localStorage.getItem('account')
 				let data = this
 				// data.$refs.left.style = "cursor: auto;"
@@ -114,6 +161,7 @@
 								data.classList.appear = true;
 								data.classList.disAppear = false;
 								data.isShow.popupShow = true
+								data.isShow.bookShow = true
 							}
 						})
 					}
@@ -126,7 +174,7 @@
 			},
 			display: function() {
 				this.isShow.helpShow = false
-			}
+			},
 		}
     }
 </script>
@@ -170,7 +218,15 @@
 			}
 		}
 
-
+		// 挂画
+		.painting{
+			width: 250px;
+			height: 350px;
+			position: absolute;
+			top: 60px;
+			right: 540px;
+			z-index: 1;
+		}
 
 		// 信物
 		.getbottle {

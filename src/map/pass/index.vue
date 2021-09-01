@@ -137,7 +137,6 @@
             getpopup: function() {
                 let data = this;
                 if (data.isShow.doorIfShow == false){
-                   return
                 } else{
                     if (data.isShow.doorShow){
                         data.tipContent = "城门已经开启了哦";

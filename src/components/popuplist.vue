@@ -91,7 +91,42 @@
 						isSelect: false,
 						pride: 50,
 						id: 13,
-					}
+					},
+					{
+						title: '糖葫芦',
+						url: require('../assets/img/xw-thl.png'),
+						id: 14,
+					},
+					{
+						title: '卷轴',
+						url: require('../assets/img/xw-hz.png'),
+						id: 15,
+					},
+					{
+						title: '钱币',
+						url: require('../assets/img/xw-tq.png'),
+						id: 16,
+					},
+					{
+						title: '树枝',
+						url: require('../assets/img/xw-szhi.png'),
+						id: 17,
+					},
+					{
+						title: '胭脂盒（红）',
+						url: require('../assets/img/xw-yzhong.png'),
+						id: 18,
+					},
+					{
+						title: '豆子',
+						url: require('../assets/img/xw-dz.png'),
+						id: 19,
+					},
+					{
+						title: '胭脂盒（黄）',
+						url: require('../assets/img/xw-yzh.png'),
+						id: 20,
+					},
 				],
 				productList: [{
 						title: '发',
@@ -162,7 +197,8 @@
 						isSelect: false,
 						pride: 50,
 						id: 13,
-					}
+					},
+					
 				]
 			}
 		},

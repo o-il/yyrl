@@ -1,7 +1,6 @@
 <template>
 	<div class="container" ref="container">
 		<div class="content" ref="content">
-
 			<!-- 背景图 -->
 			<img :src="bgUrl" alt="" class="content_bg">
 
@@ -15,7 +14,6 @@
 			<div class="decorate">
 				<div class="people">
 					<img :src="decorate[0]" alt="">
-
 				</div>
 				<div class="railing">
 					<img :src="decorate[1]" alt="">
@@ -26,14 +24,39 @@
 				<div class="shelf2">
 					<img :src="decorate[2]" alt="">
 				</div>
-				<div class="bigShelf">
+				<div class="bigShelf" @click="getgourd()">
 					<img :src="decorate[3]" alt="">
 				</div>
 				<div class="tree1">
 					<img :src="decorate[4]" alt="">
 				</div>
-				<div class="tree2">
+				<div class="tree2" @click="getbranch()">
 					<img :src="decorate[5]" alt="">
+				</div>
+			</div>
+			
+			<!-- 物品表 -->
+			<Popuplist ref="popuplist"></Popuplist>
+			
+			<!-- 弹窗-糖葫芦 -->
+			<div class="bag_content" :class="this.classList" v-show="isShow">
+				<img :src="decorate[6]" alt="" class="bag_img">
+				<div class="left">
+					<img src="../assets/img/xw-thl.png" v-show="gourd">
+					<img src="../assets/img/xw-szhi.png" v-show="!gourd">
+				</div>
+				<div class="mid" v-show="gourd">
+					<div class="up">恭喜您获得:</div>
+					<div class="down">信物-糖葫芦</div>
+				</div>
+				<div class="mid" v-show="!gourd">
+					<div class="up">恭喜您获得:</div>
+					<div class="down">信物-树枝</div>
+				</div>
+				<div class="right">
+					<div class="btn" @mousedown="closedown()" @mouseup="closeup()">
+						<img :src="decorate[7]" alt="" ref="close">
+					</div>
 				</div>
 			</div>
 
@@ -50,16 +73,15 @@
 
 		<!-- 背包 -->
 		<Package @mousedown.native='clickdown()' @mouseup.native='clickup()' ref='bag' v-show="component.bagShow"
-			bagShow='bagShow' @closeComponent="closeComponent"></Package>
-		
+			bagShow='bagShow' @closeComponent="closeComponent" :key='toolKey'></Package>
+
 		<!-- 个人中心 -->
 		<My @mousedown.native='clickdown()' @mouseup.native='clickup()' ref='my' v-show="component.myShow"
 			myShow='myShow' @closeComponent="closeComponent"></My>
-			
+
 		<!-- 排行榜 -->
 		<List @mousedown.native='clickdown()' @mouseup.native='clickup()' ref='list' v-show="component.listShow"
 			listShow='listShow' @closeComponent="closeComponent"></List>
-		</div>
 	</div>
 
 </template>
@@ -68,18 +90,27 @@
 	import Package from './component/package.vue'
 	import My from './component/my.vue'
 	import List from './component/list.vue'
+	import Popuplist from '../components/popuplist.vue'
 	export default {
 		components: {
-			'Package': Package,
-			'My': My,
-			'List':List,
+			Package,
+			My,
+			List,
+			Popuplist
 		},
 		data() {
 			return {
+				toolKey:0,
+				gourd: false,
+				isShow: false,
+				classList: {
+					appear: true,
+					disAppear: false,
+				},
 				component: {
 					bagShow: false,
 					myShow: false,
-					listShow:false,
+					listShow: false,
 				},
 				bgUrl: require("../assets/img/ground.png"),
 				building: [{
@@ -87,70 +118,70 @@
 						class: {
 							house_1_1: true
 						},
-						housename:'stage'
+						housename: 'stage'
 					},
 					{
 						houseUrl: require("../assets/img/9-museum.png"),
 						class: {
 							house_1_2: true
 						},
-						housename:'museum'
+						housename: 'museum'
 					},
 					{
 						houseUrl: require("../assets/img/11-exchange1.png"),
 						class: {
 							house_1_3: true
 						},
-						housename:'shop'
+						housename: 'shop'
 					},
 					{
 						houseUrl: require("../assets/img/13-workshop.png"),
 						class: {
 							house_1_4: true
 						},
-						housename:'teach'
+						housename: 'teach'
 					},
 					{
 						houseUrl: require("../assets/img/8-viewing.png"),
 						class: {
 							house_1_5: true
 						},
-						housename:'viewing'
+						housename: 'viewing'
 					},
 					{
 						houseUrl: require("../assets/img/29-costume.png"),
 						class: {
 							house_2_1: true
 						},
-						housename:''
+						housename: ''
 					},
 					{
 						houseUrl: require("../assets/img/28-exchange2.png"),
 						class: {
 							house_2_2: true
 						},
-						housename:''
+						housename: ''
 					},
 					{
 						houseUrl: require("../assets/img/23-pass.png"),
 						class: {
 							house_2_3: true
 						},
-						housename:'pass'
+						housename: 'pass'
 					},
 					{
 						houseUrl: require("../assets/img/26-instruments.png"),
 						class: {
 							house_2_4: true
 						},
-						housename:'musical'
+						housename: 'musical'
 					},
 					{
 						houseUrl: require("../assets/img/6-help.png"),
 						class: {
 							house_2_5: true
 						},
-						housename:'helpcenter'
+						housename: 'helpcenter'
 					},
 				],
 				decorate: [
@@ -160,6 +191,9 @@
 					require("../assets/img/33-lantern3.png"),
 					require("../assets/img/tree1.png"),
 					require("../assets/img/7-trees3.png"),
+					require('../assets/img/底2.jpg'),
+					require('../assets/icon/close.png'),
+					require('../assets/icon/close-press.png'),
 				],
 				tools: [{
 						text: '背包',
@@ -206,19 +240,19 @@
 								vioce: true,
 						},
 					},
-
 				],
+				popupList: [],
 				flag: true,
-				f:true,
+				f: true,
 			}
 		},
 		methods: {
 			// 点击房子跳转
-			gotoHouse:function(house){
+			gotoHouse: function(house) {
 				this.$router.push(house)
 			},
-			
-			
+
+
 			// 鼠标经过
 			hover: function(index) {
 				if (index != 4) {
@@ -273,27 +307,115 @@
 			closeComponent: function(index) {
 				this.component[index] = false
 			},
-		},
 
+			// 弹窗关闭
+			closedown: function() {
+				this.$refs.close.src = this.decorate[8]
+			},
+			closeup: function() {
+				this.$refs.close.src = this.decorate[7]
+				this.classList.appear = false
+				this.classList.disAppear = true
+				setTimeout(() => {
+					this.isShow = false
+					this.classList.appear = true
+					this.classList.disAppear = false
+				}, 200)
+			},
+			// 点击树
+			getbranch(){
+				
+				// 查找该用户是否有此物品
+				let account = localStorage.getItem('account')
+				let data = this
+				// 查找该用户是否有此物品
+				this.$http.post('/app/user/', {
+					"endata": {
+						"action": "myitems",
+						"account": account
+					}
+				}).then((res) => {
+					res = res.data
+					if (res.endata.items.includes(17)) {
+						// 若有则return
+						return
+					} else {
+						data.$http.post('/app/user/', {
+							"endata": {
+								"action": "newitem",
+								"account": account,
+								"item_id": 17
+							}
+						}).then((res) => {
+							// 若无则弹窗出现
+							if (res.data.endata.su == 1) {
+								this.isShow = true
+								this.gourd = false
+								// 强制刷新背包
+								this.toolKey++
+							}
+						})
+					}
+				})
+			},
+			// 点击葫芦架子
+			getgourd: function() {
+				// 查找该用户是否有此物品
+				let account = localStorage.getItem('account')
+				let data = this
+				// 查找该用户是否有此物品
+				this.$http.post('/app/user/', {
+					"endata": {
+						"action": "myitems",
+						"account": account
+					}
+				}).then((res) => {
+					res = res.data
+					if (res.endata.items.includes(14)) {
+						// 若有则return
+						return
+					} else {
+						data.$http.post('/app/user/', {
+							"endata": {
+								"action": "newitem",
+								"account": account,
+								"item_id": 14
+							}
+						}).then((res) => {
+							// 若无则弹窗出现
+							if (res.data.endata.su == 1) {
+								this.isShow = true
+								this.gourd = true
+								// 强制刷新背包
+								this.toolKey++
+							}
+						})
+					}
+				})
+
+			},
+		},
+		created() {
+
+		},
 		mounted() {
+			// 获取物品表
+			this.popupList = this.$refs.popuplist.popuplist
 			// 获取用户信息
 			let account = localStorage.getItem('account')
-			this.$http.post('/app/user',{
-				'endata':{
-					"action":"integaladd",
-					"account":account,
-					"value":0
+			this.$http.post('/app/user', {
+				'endata': {
+					"action": "integaladd",
+					"account": account,
+					"value": 0
 				}
-			}).then((res)=>{
-				res=res.data
+			}).then((res) => {
+				res = res.data
 				this.tools[3].text = res.endata.integral
-			}).catch((err)=>{
+			}).catch((err) => {
 				console.log(err)
 			})
-			
-			
-			
-			
+
 			// 添加鼠标按下时监听，控制视口移动
 			this.$refs.container.addEventListener('mousedown', (e) => {
 				if (!this.flag) {
@@ -351,25 +473,25 @@
 			this.$refs.container.addEventListener('mouseup', (e) => {
 				this.flag = true
 			})
-			
-			for(let i = 0;i<this.building.length;i++){
-				this.$refs.builds[i].addEventListener('mousedown',(e)=>{
-					const housemove = (e)=>{
+
+			for (let i = 0; i < this.building.length; i++) {
+				this.$refs.builds[i].addEventListener('mousedown', (e) => {
+					const housemove = (e) => {
 						this.f = false
 					}
-					const houseup = (e)=>{
-						if(this.f){
-							setTimeout(()=>{
+					const houseup = (e) => {
+						if (this.f) {
+							setTimeout(() => {
 								this.gotoHouse(this.building[i].housename)
-							},100)
+							}, 100)
 						}
-						this.f=true
+						this.f = true
 						// 移除监听
 						this.$refs.builds[i].removeEventListener('mousemove', housemove)
 						this.$refs.builds[i].removeEventListener('mouseup', houseup)
 					}
-					this.$refs.builds[i].addEventListener('mousemove',housemove)
-					this.$refs.builds[i].addEventListener('mouseup',houseup)
+					this.$refs.builds[i].addEventListener('mousemove', housemove)
+					this.$refs.builds[i].addEventListener('mouseup', houseup)
 				})
 			}
 		}
@@ -381,9 +503,76 @@
 		width: 100vw;
 		height: 100vh;
 		overflow: scroll;
-		.btn{
+
+		.btn {
 			position: absolute;
 			top: 0;
+		}
+	}
+
+	// 信物
+	.bag_content {
+		position: fixed;
+		width: 854px;
+		height: 482px;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		z-index: 11;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		.bag_img {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			z-index: -1;
+			pointer-events: none;
+		}
+
+		.left {
+			width: 40%;
+			display: flex;
+			justify-content: center;
+
+			img {
+				pointer-events: none;
+			}
+		}
+
+		.mid {
+			width: 50%;
+			height: 30%;
+			font-family: 'xingkai';
+			font-size: 40px;
+			color: rgba($color: #786850, $alpha: 1.0);
+			position: relative;
+
+			.up {
+				position: absolute;
+				left: 20px;
+			}
+
+			.down {
+				position: absolute;
+				bottom: 0;
+				right: 80px;
+			}
+		}
+
+		.right {
+			width: 15%;
+			height: 90%;
+
+			.btn {
+				cursor: pointer;
+				margin-top: 20px;
+
+				img {
+					pointer-events: none;
+				}
+			}
 		}
 	}
 
@@ -507,6 +696,8 @@
 				position: absolute;
 				bottom: 20px;
 				left: 780px;
+				cursor: pointer;
+				pointer-events: auto;
 			}
 
 			.tree1 {
@@ -520,6 +711,8 @@
 				position: absolute;
 				bottom: 20px;
 				right: 0px;
+				cursor: pointer;
+				pointer-events: auto;
 			}
 		}
 
@@ -564,6 +757,36 @@
 				}
 			}
 
+		}
+	}
+
+
+	// 过渡动画
+	.appear {
+		animation: appear .2s ease;
+	}
+
+	.disAppear {
+		animation: disappear .25s ease;
+	}
+
+	@keyframes appear {
+		0% {
+			opacity: 0;
+		}
+
+		100% {
+			opacity: 1;
+		}
+	}
+
+	@keyframes disappear {
+		0% {
+			opacity: 1;
+		}
+
+		100% {
+			opacity: 0;
 		}
 	}
 </style>

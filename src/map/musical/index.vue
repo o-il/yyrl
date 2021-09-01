@@ -218,7 +218,7 @@
 					}
 				}).then((res) => {
 					res = res.data
-					if (res.endata.items.includes(2)) {
+					if (res.endata.items.includes(1)) {
 						// 若有则return
 						return
 					} else {
@@ -235,6 +235,8 @@
 								data.classList.appear = true;
 								data.classList.disAppear = false;
 								data.isShow = true
+								// 强制刷新背包
+								
 							}
 						})
 					}

@@ -15,8 +15,8 @@
 				<div class="playbtn" @mousedown="play_down()" @mouseup="play_up()">
 					<img :src="imgUrl.icon1" alt="" ref="playbtn">
 				</div>
-				<div class="close">
-					<img :src="imgUrl.icon3" alt="" @mousedown="close_down()" @mouseup="close_up()" ref="closebtn">
+				<div class="close" @mousedown="close_down()" @mouseup="close_up()">
+					<img :src="imgUrl.icon3" alt="" ref="closebtn">
 				</div>
 			</div>
 			
