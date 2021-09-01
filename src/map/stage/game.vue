@@ -302,7 +302,7 @@
 					}
 				],
 				now_question: {
-					number: 10, //目前是哪道题目
+					number: 1, //目前是哪道题目
 					right: 0, //对了几道
 					integral: 0, //积分
 					select: 0, //用户的回答

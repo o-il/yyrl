@@ -34,10 +34,10 @@
 					<img :src="decorate[5]" alt="">
 				</div>
 			</div>
-			
+
 			<!-- 物品表 -->
 			<Popuplist ref="popuplist"></Popuplist>
-			
+
 			<!-- 弹窗-糖葫芦 -->
 			<div class="bag_content" :class="this.classList" v-show="isShow">
 				<img :src="decorate[6]" alt="" class="bag_img">
@@ -100,7 +100,7 @@
 		},
 		data() {
 			return {
-				toolKey:0,
+				toolKey: 0,
 				gourd: false,
 				isShow: false,
 				classList: {
@@ -118,70 +118,80 @@
 						class: {
 							house_1_1: true
 						},
-						housename: 'stage'
+						housename: 'stage',
+						lock: false
 					},
 					{
 						houseUrl: require("../assets/img/9-museum.png"),
 						class: {
 							house_1_2: true
 						},
-						housename: 'museum'
+						housename: 'museum',
+						lock: false
 					},
 					{
 						houseUrl: require("../assets/img/11-exchange1.png"),
 						class: {
 							house_1_3: true
 						},
-						housename: 'shop'
+						housename: 'shop',
+						lock: true
 					},
 					{
 						houseUrl: require("../assets/img/13-workshop.png"),
 						class: {
 							house_1_4: true
 						},
-						housename: 'teach'
+						housename: 'teach',
+						lock: false
 					},
 					{
 						houseUrl: require("../assets/img/8-viewing.png"),
 						class: {
 							house_1_5: true
 						},
-						housename: 'viewing'
+						housename: 'viewing',
+						lock: false
 					},
 					{
 						houseUrl: require("../assets/img/29-costume.png"),
 						class: {
 							house_2_1: true
 						},
-						housename: ''
+						housename: '',
+						lock: true
 					},
 					{
 						houseUrl: require("../assets/img/28-exchange2.png"),
 						class: {
 							house_2_2: true
 						},
-						housename: ''
+						housename: '',
+						lock: true
 					},
 					{
 						houseUrl: require("../assets/img/23-pass.png"),
 						class: {
 							house_2_3: true
 						},
-						housename: 'pass'
+						housename: 'pass',
+						lock: false
 					},
 					{
 						houseUrl: require("../assets/img/26-instruments.png"),
 						class: {
 							house_2_4: true
 						},
-						housename: 'musical'
+						housename: 'musical',
+						lock: false
 					},
 					{
 						houseUrl: require("../assets/img/6-help.png"),
 						class: {
 							house_2_5: true
 						},
-						housename: 'helpcenter'
+						housename: 'helpcenter',
+						lock: false
 					},
 				],
 				decorate: [
@@ -247,9 +257,16 @@
 			}
 		},
 		methods: {
+
 			// 点击房子跳转
-			gotoHouse: function(house) {
-				this.$router.push(house)
+			gotoHouse: function(house, isLock) {
+				if (!isLock) {
+					this.$router.push(house)
+				} else {
+					this.$message({
+						message: '该建筑尚未解锁',
+					})
+				}
 			},
 
 
@@ -323,8 +340,7 @@
 				}, 200)
 			},
 			// 点击树
-			getbranch(){
-				
+			getbranch() {
 				// 查找该用户是否有此物品
 				let account = localStorage.getItem('account')
 				let data = this
@@ -399,6 +415,7 @@
 
 		},
 		mounted() {
+
 			// 获取物品表
 			this.popupList = this.$refs.popuplist.popuplist
 			// 获取用户信息
@@ -474,6 +491,25 @@
 				this.flag = true
 			})
 
+			// 解锁建筑
+			this.$http.post('/app/user', {
+				"endata": {
+					"action": "userinfo",
+					"account": account
+				}
+			}).then((res)=>{
+				res=res.data.endata.userdata
+				if(res.completed){
+					for(let i=0;i<this.building.length;i++){
+						this.building[i].lock = false
+					}
+				}else{
+					return
+				}
+			})
+
+
+			// 点击建筑进入相应的模块
 			for (let i = 0; i < this.building.length; i++) {
 				this.$refs.builds[i].addEventListener('mousedown', (e) => {
 					const housemove = (e) => {
@@ -482,7 +518,7 @@
 					const houseup = (e) => {
 						if (this.f) {
 							setTimeout(() => {
-								this.gotoHouse(this.building[i].housename)
+								this.gotoHouse(this.building[i].housename, this.building[i].lock)
 							}, 100)
 						}
 						this.f = true
