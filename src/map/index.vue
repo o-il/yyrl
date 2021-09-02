@@ -166,7 +166,7 @@
 						class: {
 							house_2_2: true
 						},
-						housename: '',
+						housename: 'shop2',
 						lock: true
 					},
 					{
