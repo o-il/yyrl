@@ -158,7 +158,7 @@
 						class: {
 							house_2_1: true
 						},
-						housename: '',
+						housename: 'dress',
 						lock: true
 					},
 					{

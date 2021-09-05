@@ -59,7 +59,7 @@
 					},
 					{
 						title: '发',
-						url: require('../assets/img/shop/xst2.png'),
+						url: require('../assets/img/shop/dmf1.png'),
 						isSelect: false,
 						pride: 40,
 						id: 9,
@@ -129,7 +129,7 @@
 					},
 					{
 						title: '面',
-						url: require('../assets/img/shop/hdt1.png'),
+						url: require('../assets/img/shop/hdz1.png'),
 						isSelect: false,
 						pride: 14,
 						id: 21,
@@ -214,7 +214,7 @@
 					},
 					{
 						title: '发',
-						url: require('../assets/img/shop/xst2.png'),
+						url: require('../assets/img/shop/dmf1.png'),
 						isSelect: false,
 						pride: 40,
 						id: 9,
@@ -250,7 +250,7 @@
 				],
 				productList2: [{
 						title: '面',
-						url: require('../assets/img/shop/hdt1.png'),
+						url: require('../assets/img/shop/hdz1.png'),
 						isSelect: false,
 						pride: 14,
 						id: 21,

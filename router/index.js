@@ -17,6 +17,7 @@ import Museum from '../src/map/museum/index.vue'
 import Pass from '../src/map/pass/index.vue'
 import Shop from '../src/map/shop/index.vue'
 import Shop2 from '../src/map/shop2/index.vue'
+import Dress from '../src/map/dressing/index.vue'
 
 Vue.use(VueRouter)
 
@@ -95,6 +96,12 @@ const routes = [{
 },{
 	path: '/shop2',
 	component: Shop2,
+	meta: {
+		requireAuth: true, // 添加该字段，表示进入这个路由是需要登录的
+	},
+},{
+	path: '/dress',
+	component: Dress,
 	meta: {
 		requireAuth: true, // 添加该字段，表示进入这个路由是需要登录的
 	},
