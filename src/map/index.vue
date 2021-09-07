@@ -82,6 +82,9 @@
 		<!-- 排行榜 -->
 		<List @mousedown.native='clickdown()' @mouseup.native='clickup()' ref='list' v-show="component.listShow"
 			listShow='listShow' @closeComponent="closeComponent"></List>
+		
+		<!-- 新手引导 -->
+		<Guide v-show="component.guideShow" guideShow="guideShow" @closeComponent="closeComponent"></Guide>
 	</div>
 
 </template>
@@ -90,13 +93,15 @@
 	import Package from './component/package.vue'
 	import My from './component/my.vue'
 	import List from './component/list.vue'
+	import Guide from './component/guide.vue'
 	import Popuplist from '../components/popuplist.vue'
 	export default {
 		components: {
 			Package,
 			My,
 			List,
-			Popuplist
+			Popuplist,
+			Guide
 		},
 		data() {
 			return {
@@ -111,6 +116,7 @@
 					bagShow: false,
 					myShow: false,
 					listShow: false,
+					guideShow: false,
 				},
 				bgUrl: require("../assets/img/ground.png"),
 				building: [{
@@ -529,6 +535,14 @@
 					this.$refs.builds[i].addEventListener('mousemove', housemove)
 					this.$refs.builds[i].addEventListener('mouseup', houseup)
 				})
+			}
+			
+			// 第一次进入地图时激活新手引导
+			if(localStorage.getItem('isNew') == 1){
+				this.component.guideShow = true
+				localStorage.setItem('isNew',0)
+			}else{
+				this.component.guideShow = false
 			}
 		}
 	}

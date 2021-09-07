@@ -90,9 +90,13 @@
 						this.$message({
 							message: '登陆成功',
 							type: 'success'
-						});
-						this.$store.commit('$_setToken', res.endata.token);
-						this.$store.commit('$_setaccount', res.endata.userdata.account);
+						})
+						this.$store.commit('$_setToken', res.endata.token)
+						this.$store.commit('$_setaccount', res.endata.userdata.account)
+						if(localStorage.getItem('isNew') == null){
+							localStorage.setItem('isNew',1)
+						}
+						console.log(localStorage.getItem('isNew'))
 						this.$router.push('/map')
 					} else {
 						this.$message({
