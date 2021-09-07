@@ -329,12 +329,27 @@
 										}
 									}).then((res)=>{
 										res = res.data.endata.userdata
-										console.log(typeof(res.answered))
-										console.log(typeof(JSON.parse(res.answered)))
-										res.answered = JSON.parse(res.answered).push(0)
-										res.integral += 50
-										console.log(typeof(res.answered))
+										let myanswered = res.answered + 1
+										console.log(myanswered)
+										// 问题加一
+										this.$http.post('/app/user',{
+											"endata":{
+												"action":"answer",
+												"account": account,
+												"question": myanswered
+											}
+										})
 									})
+									
+									// 增加50积分
+									this.$http.post('/app/user',{
+										"endata":{
+											"action":"integaladd",
+											"account":account,
+											"value":50
+										}
+									})
+									
 									break
 								}
 								this.$message({
@@ -402,8 +417,24 @@
 										}
 									}).then((res)=>{
 										res = res.data.endata.userdata
-										JSON.parse(res.answered).push(0)
-										res.integral += 50
+										let myanswered = res.answered
+										// 问题加一
+										this.$http.post('/app/user',{
+											"endata":{
+												"action":"answer",
+												"account": account,
+												"question": myanswered + 1
+											}
+										})
+									})
+									
+									// 增加50积分
+									this.$http.post('/app/user',{
+										"endata":{
+											"action":"integaladd",
+											"account":account,
+											"value":50
+										}
 									})
 									break
 								}
@@ -457,8 +488,24 @@
 									}
 								}).then((res)=>{
 									res = res.data.endata.userdata
-									JSON.parse(res.answered).push(0)
-									res.integral += 50
+									let myanswered = res.answered
+									// 问题加一
+									this.$http.post('/app/user',{
+										"endata":{
+											"action":"answer",
+											"account": account,
+											"question": myanswered + 1
+										}
+									})
+								})
+								
+								// 增加50积分
+								this.$http.post('/app/user',{
+									"endata":{
+										"action":"integaladd",
+										"account":account,
+										"value":50
+									}
 								})
 								break
 						}
@@ -507,8 +554,24 @@
 									}
 								}).then((res)=>{
 									res = res.data.endata.userdata
-									JSON.parse(res.answered).push(0)
-									res.integral += 50
+									let myanswered = res.answered
+									// 问题加一
+									this.$http.post('/app/user',{
+										"endata":{
+											"action":"answer",
+											"account": account,
+											"question": myanswered + 1
+										}
+									})
+								})
+								
+								// 增加50积分
+								this.$http.post('/app/user',{
+									"endata":{
+										"action":"integaladd",
+										"account":account,
+										"value":50
+									}
 								})
 								break
 						}
@@ -548,7 +611,7 @@
 				}
 			}).then((res)=>{
 				res = res.data.endata.userdata
-				data.current.index = JSON.parse(res.answered).length+1
+				data.current.index = res.answered
 			})
 		}
 	}
